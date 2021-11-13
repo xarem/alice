@@ -17,6 +17,7 @@ use Nelmio\Alice\IsAServiceTrait;
 use Nelmio\Alice\Throwable\Exception\PropertyAccess\NoSuchPropertyExceptionFactory;
 use stdClass;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 final class StdPropertyAccessor implements PropertyAccessorInterface
 {
@@ -42,8 +43,8 @@ final class StdPropertyAccessor implements PropertyAccessorInterface
 
         $this->decoratedPropertyAccessor->setValue($objectOrArray, $propertyPath, $value);
     }
-    
-    public function getValue($objectOrArray, $propertyPath)
+
+    public function getValue(object|array $objectOrArray, PropertyPathInterface|string $propertyPath): mixed
     {
         if (false === $objectOrArray instanceof stdClass) {
             return $this->decoratedPropertyAccessor->getValue($objectOrArray, $propertyPath);
@@ -55,16 +56,16 @@ final class StdPropertyAccessor implements PropertyAccessorInterface
 
         return $objectOrArray->$propertyPath;
     }
-    
-    public function isWritable($objectOrArray, $propertyPath)
+
+    public function isWritable(object|array $objectOrArray, PropertyPathInterface|string $propertyPath): bool
     {
         return ($objectOrArray instanceof stdClass)
             ? true
             : $this->decoratedPropertyAccessor->isWritable($objectOrArray, $propertyPath)
         ;
     }
-    
-    public function isReadable($objectOrArray, $propertyPath)
+
+    public function isReadable(object|array $objectOrArray, PropertyPathInterface|string $propertyPath): bool
     {
         return ($objectOrArray instanceof stdClass)
             ? isset($objectOrArray->$propertyPath)
